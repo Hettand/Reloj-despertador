@@ -84,6 +84,11 @@
             let hour = date.getHours();
             let minutes = date.getMinutes();
             seconds = date.getSeconds();
+
+            // al cambiar la hora nos tremos la fecha actual
+            if (hour === 24 && minutes === 0) getToday()
+
+
             /*cuando las cifras son de un solo digito queremos que se pueda ver 
             el cero delante y eso lo conseguimos con este condicional*/
             if (hour < 10) {
@@ -91,7 +96,6 @@
             }
             if (minutes < 10) {
                 minutes = "0" + minutes
-                if (minutes === 0) getToday() // al cambiar la hora nos tremos la fecha actual
             }
             if (seconds < 10) {
                 seconds = "0" + seconds
