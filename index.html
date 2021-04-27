@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reloj despertador</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.17/dist/css/uikit.min.css" />
+
+</head>
+
+<body>
+    <div class="contenedor">
+        <div class="content-clock">
+            <div id="date"></div>
+            <div class="uk-flex-inline uk-flex-between">
+                <div>
+                    <button type="button" class="uk-button uk-button-primary btn-alarma" id="btnAlarm" uk-tooltip="tile:Establecer alarma">Alarma</button>
+                    <div class="uk-padding-small" uk-dropdown="mode:click">
+                        <div class="uk-align-center uk-margin-remove-bottom">
+                            <input type="time" value="00:00" id="inputTime">
+                            <br>
+                            <button type="button" class="uk-button uk-button-primary uk-margin-small" onclick="programar()">
+                                Programar
+                            </button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="uk-flex-inline uk-flex-between">
+                        <span id="show-alarma">Sin alarma</span>
+                        <button type="button" class="uk-button-danger" id="btnStop" uk-tooltip="title: Detener">x</button>
+                    </div>
+                </div>
+                <div id="clock">
+                    <div class="uk-flex-inline">
+                        <div id="hour">00:00</div>
+                        <div id="seconds">00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio id="audioTag" src="alarm-clock.mp3"></audio>
+    <div class="font-div">
+        <p>Fuente utilizada Digital 7 <a href="https://www.dafont.com/es/search.php?q=digital" target="_blank"> https://www.dafont.com/es/search.php?q=digital</a></p>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.17/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.17/dist/js/uikit-icons.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+                getToday()
+                    //nos queda iniciar el temporizardor en 1 segundo = 1000ms
+                setInterval(updateTime, 1000);
+            })
+            // variable para el alarma
+        let alarm = {
+                active: false,
+                time: ""
+            }
+            // los datos 
+        const namesDays = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"]
+        const namesMonths = [
+            "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
+            "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+        ]
+
+        function getToday() {
+            // usamos date 
+            let date = new Date();
+            // concatenamos la fecha uusamos los datos de los días y meses
+            let mydate = namesDays[date.getDay()] + " " + date.getDate() + " de " + namesMonths[date.getMonth()] + " de " + date.getFullYear()
+            $("#date").html(mydate)
+        }
+
+        /*creamos una instancia del objeto Date() y
+         mediante los correspondientes metodos obtenemos: hour, minutes y seconds*
+         para actualizar la hora debemos hacer una funcion que sirva de temporizador*/
+        function updateTime() {
+            let date = new Date();
+            let hour = date.getHours();
+            let minutes = date.getMinutes();
+            seconds = date.getSeconds();
+            /*cuando las cifras son de un solo digito queremos que se pueda ver 
+            el cero delante y eso lo conseguimos con este condicional*/
+            if (hour < 10) {
+                hour = "0" + hour
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes
+                if (minutes === 0) getToday() // al cambiar la hora nos tremos la fecha actual
+            }
+            if (seconds < 10) {
+                seconds = "0" + seconds
+            }
+            //los juntamos a todos
+            let time = hour + ":" + minutes
+            $('#hour').html(time)
+            $('#seconds').html(seconds)
+            awake(time)
+
+        }
+
+        function awake(time) {
+            if (alarm.active) {
+                if (alarm.time === time) {
+                    $(".content-clock").addClass("sound")
+                    $("#btnStop").css("display", "inline-block")
+                    startAlarm()
+                }
+            }
+        }
+
+        function programar() {
+            alarm.active = true
+            alarm.time = $("#inputTime").val()
+            $("#show-alarma").text("Alarma: " + $("#inputTime").val())
+            $("#btnAlarm").click()
+        }
+
+        $("#btnStop").click(function() {
+            $("#btnStop").css("display", "none")
+            $(".content-clock").removeClass("sound")
+            stopAlarm()
+
+        })
+
+        function startAlarm() {
+            let sound = document.getElementById("audioTag");
+            sound.play()
+            if (alarm.active && sound.paused) sound.play()
+        }
+
+        function stopAlarm() {
+            let sound = document.getElementById("audioTag");
+            sound.pause()
+            $("#show-alarma").text("Sin alarma")
+            alarm.active = false
+
+        }
+    </script>
+</body>
+
+</html>
