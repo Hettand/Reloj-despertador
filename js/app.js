@@ -26,8 +26,8 @@ function updateTime() {
     let minutes = date.getMinutes();
     seconds = date.getSeconds();
 
-    // al cambiar la hora nos tremos la fecha actual
-    if (hour === 24 && minutes === 0) getToday()
+    // al cambiar la hora a medianoche nos traemos la fecha actual
+    if (hour === 0 && minutes === 0) getToday()
 
 
     /*cuando las cifras son de un solo digito queremos que se pueda ver 
