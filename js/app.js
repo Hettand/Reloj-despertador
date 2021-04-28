@@ -1,3 +1,4 @@
+// variable para el alarma
 let alarm = {
         active: false,
         time: ""
